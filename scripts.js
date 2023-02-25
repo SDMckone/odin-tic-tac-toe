@@ -137,6 +137,9 @@ const gameBoard = (() => {
 })();
 
 const gameAI = (() => {
+    /** @type {string} Game AI's name */
+    const name = "TTT_AI_V1";
+
     // Helper function to get random int between min (inclusive) and max (exclusive)
     function getRandomInt(min, max) {
         this.min = Math.ceil(min);
@@ -148,6 +151,7 @@ const gameAI = (() => {
      * Make an AI move
      * Current algorithm is random play
      * @param {char} symbol - symbol for the AI to use in its play
+     * @returns {boolean} - true if valid move, else false
      */
     const makeAIMove = (symbol) => {
         // Array of empty indices on the board
@@ -157,7 +161,6 @@ const gameAI = (() => {
         for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
             if (gameBoard.gameBoardArray[i] === " ") {
                 emptyIndexArray.push(i);
-                console.log(i);
             }
         }
 
@@ -165,8 +168,24 @@ const gameAI = (() => {
         const index = getRandomInt(0, emptyIndexArray.length);
 
         // Make move
-        gameBoard.makeMove(emptyIndexArray[index], symbol);
+        return gameBoard.makeMove(emptyIndexArray[index], symbol);
     };
 
-    return { makeAIMove };
+    return { name, makeAIMove };
 })();
+
+const Player = (name, symbol) => {
+    /** @type {string} Player's name */
+    this.name = name;
+    /** @type {char} Player's symbol (X or O) */
+    this.symbol = symbol;
+
+    /**
+     * Make a player move
+     * @param {number} index - Index for the player to play on
+     * @returns {boolean} true if valid move, else false
+     */
+    const makePlayerMove = (index) => gameBoard.makeMove(index, symbol);
+
+    return { name, symbol, makePlayerMove };
+};
