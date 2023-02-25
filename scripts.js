@@ -67,19 +67,22 @@ const gameBoard = (() => {
         // Check if winner exists
         if (
             gameBoardArray[0] !== " " &&
-            (gameBoardArray[0] === gameBoardArray[1]) === gameBoardArray[2]
+            gameBoardArray[0] === gameBoardArray[1] &&
+            gameBoardArray[1] === gameBoardArray[2]
         ) {
             return gameBoardArray[0];
         }
         if (
             gameBoardArray[3] !== " " &&
-            (gameBoardArray[3] === gameBoardArray[4]) === gameBoardArray[5]
+            gameBoardArray[3] === gameBoardArray[4] &&
+            gameBoardArray[4] === gameBoardArray[5]
         ) {
             return gameBoardArray[3];
         }
         if (
             gameBoardArray[6] !== " " &&
-            (gameBoardArray[6] === gameBoardArray[7]) === gameBoardArray[8]
+            gameBoardArray[6] === gameBoardArray[7] &&
+            gameBoardArray[7] === gameBoardArray[8]
         ) {
             return gameBoardArray[6];
         }
@@ -92,25 +95,29 @@ const gameBoard = (() => {
         }
         if (
             gameBoardArray[1] !== " " &&
-            (gameBoardArray[1] === gameBoardArray[4]) === gameBoardArray[7]
+            gameBoardArray[1] === gameBoardArray[4] &&
+            gameBoardArray[4] === gameBoardArray[7]
         ) {
             return gameBoardArray[1];
         }
         if (
             gameBoardArray[2] !== " " &&
-            (gameBoardArray[2] === gameBoardArray[5]) === gameBoardArray[8]
+            gameBoardArray[2] === gameBoardArray[5] &&
+            gameBoardArray[5] === gameBoardArray[8]
         ) {
             return gameBoardArray[2];
         }
         if (
             gameBoardArray[0] !== " " &&
-            (gameBoardArray[0] === gameBoardArray[4]) === gameBoardArray[8]
+            gameBoardArray[0] === gameBoardArray[4] &&
+            gameBoardArray[4] === gameBoardArray[8]
         ) {
             return gameBoardArray[0];
         }
         if (
             gameBoardArray[6] !== " " &&
-            (gameBoardArray[6] === gameBoardArray[4]) === gameBoardArray[2]
+            gameBoardArray[6] === gameBoardArray[4] &&
+            gameBoardArray[4] === gameBoardArray[2]
         ) {
             return gameBoardArray[6];
         }
