@@ -188,15 +188,19 @@ body {
     margin-bottom: -120px;
 }
 
-header,
-p {
+header {
     color: var(--primary-color);
 
     font-size: 80px;
     font-weight: bold;
 
     padding-top: 30px;
-    padding-bottom: 50px;
+}
+
+p {
+    color: var(--primary-color);
+    font-size: 50px;
+    font-weight: bold;
 }
 
 .one-player-button,
@@ -242,11 +246,6 @@ input[type="text"] {
     width: 400px;
 }
 
-input#two-player-name-input-1,
-input#two-player-name-input-2 {
-    width: 450px;
-}
-
 button[type="submit"] {
     font-size: 50px;
     font-weight: bold;
@@ -259,6 +258,61 @@ button[type="submit"] {
 
     width: 300px;
     height: 100px;
+}
+
+#game-board-page {
+    display: flex;
+    gap: 15px;
+    margin-right: 300px;
+}
+
+#player-name-display {
+    height: 250px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+input#two-player-name-input-1,
+input#two-player-name-input-2 {
+    width: 450px;
+}
+
+#player-one-name,
+#player-two-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 40px;
+    font-weight: bold;
+
+    color: var(--bg-color);
+    background-color: var(--primary-color);
+
+    border-radius: 10px;
+    border-width: 0px;
+
+    width: 275px;
+    height: 70px;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: 250px 250px 250px;
+    grid-template-rows: 250px 250px 250px;
+    gap: 15px;
+}
+
+.game-board-square {
+    background-color: var(--primary-color);
+
+    width: 250px;
+    height: 250px;
+
+    border-radius: 10px;
 }
 
 footer {
