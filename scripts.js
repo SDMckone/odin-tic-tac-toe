@@ -133,5 +133,40 @@ const gameBoard = (() => {
         return "T";
     };
 
-    return { makeMove, resetBoard, printBoard, checkWin, gameBoardArray };
+    return { gameBoardArray, makeMove, resetBoard, printBoard, checkWin };
+})();
+
+const gameAI = (() => {
+    // Helper function to get random int between min (inclusive) and max (exclusive)
+    function getRandomInt(min, max) {
+        this.min = Math.ceil(min);
+        this.max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    /**
+     * Make an AI move
+     * Current algorithm is random play
+     * @param {char} symbol - symbol for the AI to use in its play
+     */
+    const makeAIMove = (symbol) => {
+        // Array of empty indices on the board
+        const emptyIndexArray = [];
+
+        // Fill emptyIndexArray
+        for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
+            if (gameBoard.gameBoardArray[i] === " ") {
+                emptyIndexArray.push(i);
+                console.log(i);
+            }
+        }
+
+        // Choose random index from emptyIndexArray
+        const index = getRandomInt(0, emptyIndexArray.length);
+
+        // Make move
+        gameBoard.makeMove(emptyIndexArray[index], symbol);
+    };
+
+    return { makeAIMove };
 })();
