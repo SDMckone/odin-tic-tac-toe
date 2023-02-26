@@ -189,3 +189,70 @@ const Player = (name, symbol) => {
 
     return { name, symbol, makePlayerMove };
 };
+
+const displayController = (() => {
+    // Main header for site
+    const mainHeader = document.getElementById("main-header");
+    // Start page div
+    const startPage = document.getElementById("start-page");
+    // One player name entry page div
+    const onePlayerNameEntryPage = document.getElementById(
+        "one-player-name-entry-page"
+    );
+    // Two player name entry page div
+    const twoPlayerNameEntryPage = document.getElementById(
+        "two-player-name-entry-page"
+    );
+    // Game board page div
+    const gameBoardPage = document.getElementById("game-board-page");
+
+    const onePlayerButton =
+        document.getElementsByClassName("one-player-button")[0];
+    const twoPlayerButton =
+        document.getElementsByClassName("two-player-button")[0];
+
+    const onePlayerSubmit = document.getElementById("one-player-submit");
+    const twoPlayerSubmit = document.getElementById("two-player-submit");
+
+    mainHeader.style.display = "none";
+    onePlayerNameEntryPage.style.display = "none";
+    twoPlayerNameEntryPage.style.display = "none";
+    gameBoardPage.style.display = "none";
+
+    onePlayerButton.addEventListener("click", () => {
+        mainHeader.style.display = "";
+        startPage.style.display = "none";
+        onePlayerNameEntryPage.style.display = "";
+    });
+
+    twoPlayerButton.addEventListener("click", () => {
+        mainHeader.style.display = "";
+        startPage.style.display = "none";
+        twoPlayerNameEntryPage.style.display = "";
+    });
+
+    onePlayerSubmit.addEventListener("click", (event) => {
+        event.preventDefault();
+        onePlayerNameEntryPage.style.display = "none";
+        twoPlayerNameEntryPage.style.display = "none";
+
+        gameBoardPage.style.display = "";
+    });
+
+    twoPlayerSubmit.addEventListener("click", (event) => {
+        event.preventDefault();
+        onePlayerNameEntryPage.style.display = "none";
+        twoPlayerNameEntryPage.style.display = "none";
+
+        gameBoardPage.style.display = "";
+    });
+
+    const gameBoardSquares =
+        document.getElementsByClassName("game-board-square");
+
+    for (let i = 0; i < gameBoardSquares.length; i += 1) {
+        gameBoardSquares[i].addEventListener("click", () => {
+            gameBoardSquares[i].style.backgroundColor = "red";
+        });
+    }
+})();

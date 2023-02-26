@@ -170,7 +170,7 @@ body {
 
 #start-page-header {
     font-size: 130px;
-    padding-top: 100px;
+    padding-top: 80px;
 }
 
 .buttons {
@@ -250,14 +250,29 @@ button[type="submit"] {
     font-size: 50px;
     font-weight: bold;
 
+    width: 300px;
+    height: 100px;
+}
+
+button {
     color: var(--bg-color);
     background-color: var(--primary-color);
 
-    border-radius: 10px;
     border-width: 0px;
+    border-radius: 10px;
+}
 
-    width: 300px;
-    height: 100px;
+button:hover {
+    cursor: pointer;
+    background-color: #cfcfcf;
+    position: relative;
+    top: 1px;
+}
+
+.game-board-square:hover {
+    cursor: pointer;
+    position: relative;
+    top: 2px;
 }
 
 #game-board-page {
