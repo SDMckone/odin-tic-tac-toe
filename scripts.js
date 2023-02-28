@@ -136,9 +136,11 @@ const gameBoard = (() => {
     return { gameBoardArray, makeMove, resetBoard, printBoard, checkWin };
 })();
 
-const gameAI = (() => {
+const GameAI = (name, symbol) => {
     /** @type {string} Game AI's name */
-    const name = "TTT_AI_V1";
+    this.name = name;
+    /** @type {char} Game AI's symbol (X or O) */
+    this.symbol = symbol;
 
     // Helper function to get random int between min (inclusive) and max (exclusive)
     function getRandomInt(min, max) {
@@ -153,7 +155,7 @@ const gameAI = (() => {
      * @param {char} symbol - symbol for the AI to use in its play
      * @returns {boolean} - true if valid move, else false
      */
-    const makeAIMove = (symbol) => {
+    const makeAIMove = () => {
         // Array of empty indices on the board
         const emptyIndexArray = [];
 
@@ -171,8 +173,8 @@ const gameAI = (() => {
         return gameBoard.makeMove(emptyIndexArray[index], symbol);
     };
 
-    return { name, makeAIMove };
-})();
+    return { name, symbol, makeAIMove };
+};
 
 const Player = (name, symbol) => {
     /** @type {string} Player's name */
@@ -183,12 +185,25 @@ const Player = (name, symbol) => {
     /**
      * Make a player move
      * @param {number} index - Index for the player to play on
-     * @returns {boolean} true if valid move, else false
+     * @returns {boolean} True if valid move, else false
      */
     const makePlayerMove = (index) => gameBoard.makeMove(index, symbol);
 
     return { name, symbol, makePlayerMove };
 };
+
+const gameController = (() => {
+    /** @type {boolean} Whether the game is single-player or not */
+    let isSinglePlayer;
+    /** @type {Player} Player 1 of the game */
+    let playerOne;
+    /** @type {Player || gameAI} Player 2 of the game */
+    let playerTwo;
+    /** @type {String} Game AI's name */
+    const gameAIName = "TTT_AI_V1";
+
+    return { isSinglePlayer, playerOne, playerTwo, gameAIName };
+})();
 
 const displayController = (() => {
     // Main header for site
@@ -212,7 +227,17 @@ const displayController = (() => {
         document.getElementsByClassName("two-player-button")[0];
 
     const onePlayerSubmit = document.getElementById("one-player-submit");
+    const onePlayerNameEntryForm = document.getElementById(
+        "one-player-name-entry-form"
+    );
+
     const twoPlayerSubmit = document.getElementById("two-player-submit");
+    const twoPlayerNameEntryForm = document.getElementById(
+        "two-player-name-entry-form"
+    );
+
+    const playerOneNameDisplay = document.getElementById("player-one-name");
+    const playerTwoNameDisplay = document.getElementById("player-two-name");
 
     mainHeader.style.display = "none";
     onePlayerNameEntryPage.style.display = "none";
@@ -223,28 +248,56 @@ const displayController = (() => {
         mainHeader.style.display = "";
         startPage.style.display = "none";
         onePlayerNameEntryPage.style.display = "";
+
+        gameController.isSinglePlayer = true;
     });
 
     twoPlayerButton.addEventListener("click", () => {
         mainHeader.style.display = "";
         startPage.style.display = "none";
         twoPlayerNameEntryPage.style.display = "";
+
+        gameController.isSinglePlayer = false;
     });
 
     onePlayerSubmit.addEventListener("click", (event) => {
         event.preventDefault();
+
         onePlayerNameEntryPage.style.display = "none";
         twoPlayerNameEntryPage.style.display = "none";
-
         gameBoardPage.style.display = "";
+
+        gameController.playerOne = Player(
+            onePlayerNameEntryForm.elements["one-player-name-input"].value,
+            "X"
+        );
+
+        gameController.playerTwo = GameAI(gameController.gameAIName, "O");
+
+        playerOneNameDisplay.textContent = gameController.playerOne.name;
+        console.log(gameController.playerTwo.name);
+        playerTwoNameDisplay.textContent = gameController.playerTwo.name;
     });
 
     twoPlayerSubmit.addEventListener("click", (event) => {
         event.preventDefault();
+
         onePlayerNameEntryPage.style.display = "none";
         twoPlayerNameEntryPage.style.display = "none";
-
         gameBoardPage.style.display = "";
+
+        gameController.playerOne = Player(
+            twoPlayerNameEntryForm.elements["two-player-name-input-1"].value,
+            "X"
+        );
+
+        gameController.playerTwo = Player(
+            twoPlayerNameEntryForm.elements["two-player-name-input-2"].value,
+            "O"
+        );
+
+        playerOneNameDisplay.textContent = gameController.playerOne.name;
+        playerTwoNameDisplay.textContent = gameController.playerTwo.name;
     });
 
     const gameBoardSquares =
@@ -255,4 +308,6 @@ const displayController = (() => {
             gameBoardSquares[i].style.backgroundColor = "red";
         });
     }
+
+    // gameBoardPage.style.opacity = "5%";
 })();
