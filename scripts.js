@@ -178,6 +178,7 @@ const GameAI = (name, symbol) => {
 
 const Player = (name, symbol) => {
     /** @type {string} Player's name */
+
     this.name = name;
     /** @type {char} Player's symbol (X or O) */
     this.symbol = symbol;
@@ -260,7 +261,7 @@ const displayController = (() => {
         gameController.isSinglePlayer = false;
     });
 
-    onePlayerSubmit.addEventListener("click", (event) => {
+    onePlayerNameEntryForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
         onePlayerNameEntryPage.style.display = "none";
@@ -279,7 +280,7 @@ const displayController = (() => {
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
     });
 
-    twoPlayerSubmit.addEventListener("click", (event) => {
+    twoPlayerNameEntryForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
         onePlayerNameEntryPage.style.display = "none";
