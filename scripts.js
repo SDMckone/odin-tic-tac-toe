@@ -202,8 +202,10 @@ const gameController = (() => {
     let playerTwo;
     /** @type {String} Game AI's name */
     const gameAIName = "TTT_AI_V1";
+    /** @type {Array} Valid game symbols */
+    const gameSymbols = ["X", "O"];
 
-    return { isSinglePlayer, playerOne, playerTwo, gameAIName };
+    return { isSinglePlayer, playerOne, playerTwo, gameAIName, gameSymbols };
 })();
 
 const displayController = (() => {
@@ -227,12 +229,10 @@ const displayController = (() => {
     const twoPlayerButton =
         document.getElementsByClassName("two-player-button")[0];
 
-    const onePlayerSubmit = document.getElementById("one-player-submit");
     const onePlayerNameEntryForm = document.getElementById(
         "one-player-name-entry-form"
     );
 
-    const twoPlayerSubmit = document.getElementById("two-player-submit");
     const twoPlayerNameEntryForm = document.getElementById(
         "two-player-name-entry-form"
     );
@@ -268,15 +268,19 @@ const displayController = (() => {
         twoPlayerNameEntryPage.style.display = "none";
         gameBoardPage.style.display = "";
 
+        const symbolIndex = Math.round(Math.random());
+
         gameController.playerOne = Player(
             onePlayerNameEntryForm.elements["one-player-name-input"].value,
-            "X"
+            gameController.gameSymbols[symbolIndex]
         );
 
-        gameController.playerTwo = GameAI(gameController.gameAIName, "O");
+        gameController.playerTwo = GameAI(
+            gameController.gameAIName,
+            gameController.gameSymbols[!symbolIndex]
+        );
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
-        console.log(gameController.playerTwo.name);
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
     });
 
@@ -287,14 +291,16 @@ const displayController = (() => {
         twoPlayerNameEntryPage.style.display = "none";
         gameBoardPage.style.display = "";
 
+        const symbolIndex = Math.round(Math.random());
+
         gameController.playerOne = Player(
             twoPlayerNameEntryForm.elements["two-player-name-input-1"].value,
-            "X"
+            gameController.gameSymbols[symbolIndex]
         );
 
         gameController.playerTwo = Player(
             twoPlayerNameEntryForm.elements["two-player-name-input-2"].value,
-            "O"
+            gameController.gameSymbols[!symbolIndex]
         );
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
