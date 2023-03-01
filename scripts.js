@@ -298,6 +298,7 @@ const displayController = (() => {
                 onePlayerNameEntryForm.elements["one-player-name-input"].value,
                 gameController.gameSymbols[symbolIndex]
             );
+            playerOneNameDisplay.style.backgroundColor = "green";
             gameController.playerTwo = GameAI(
                 gameController.gameAIName,
                 gameController.gameSymbols[Math.abs(symbolIndex - 1)]
@@ -307,6 +308,7 @@ const displayController = (() => {
                 onePlayerNameEntryForm.elements["one-player-name-input"].value,
                 gameController.gameSymbols[symbolIndex]
             );
+            playerTwoNameDisplay.style.backgroundColor = "green";
             gameController.playerOne = GameAI(
                 gameController.gameAIName,
                 gameController.gameSymbols[Math.abs(symbolIndex - 1)]
@@ -314,7 +316,6 @@ const displayController = (() => {
         }
 
         gameController.activePlayer = gameController.playerOne;
-        playerOneNameDisplay.style.backgroundColor = "green";
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
@@ -328,20 +329,17 @@ const displayController = (() => {
         for (let i = 0; i < gameBoardSquares.length; i += 1) {
             gameBoardSquares[i].addEventListener("click", () => {
                 if (gameBoard.gameBoardArray[i] === " ") {
-                    gameController.activePlayer.makePlayerMove(i);
                     if (
                         gameController.activePlayer === gameController.playerOne
                     ) {
-                        playerOneNameDisplay.style.backgroundColor = "white";
-                        playerTwoNameDisplay.style.backgroundColor = "green";
-                        gameController.activePlayer = gameController.playerTwo;
+                        gameController.playerOne.makePlayerMove(i);
+                        gameController.playerTwo.makeAIMove();
                     } else {
-                        gameController.activePlayer = gameController.playerOne;
-                        playerTwoNameDisplay.style.backgroundColor = "white";
-                        playerOneNameDisplay.style.backgroundColor = "green";
+                        gameController.playerTwo.makePlayerMove(i);
+                        gameController.playerOne.makeAIMove();
                     }
-                    updateBoardDisplay();
                 }
+                updateBoardDisplay();
 
                 if (gameBoard.checkWin() === "X") {
                     alert(`${gameController.playerOne.name} wins!`);
