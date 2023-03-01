@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-console */
 
 const gameBoard = (() => {
@@ -204,8 +205,17 @@ const gameController = (() => {
     const gameAIName = "TTT_AI_V1";
     /** @type {Array} Valid game symbols */
     const gameSymbols = ["X", "O"];
+    /** @type {Player} Active player */
+    let activePlayer;
 
-    return { isSinglePlayer, playerOne, playerTwo, gameAIName, gameSymbols };
+    return {
+        isSinglePlayer,
+        playerOne,
+        playerTwo,
+        gameAIName,
+        gameSymbols,
+        activePlayer,
+    };
 })();
 
 const displayController = (() => {
@@ -245,6 +255,19 @@ const displayController = (() => {
     twoPlayerNameEntryPage.style.display = "none";
     gameBoardPage.style.display = "none";
 
+    const gameBoardSquares =
+        document.getElementsByClassName("game-board-square");
+
+    const updateBoardDisplay = () => {
+        for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
+            if (gameBoard.gameBoardArray[i] === "X") {
+                gameBoardSquares[i].style.backgroundColor = "red";
+            } else if (gameBoard.gameBoardArray[i] === "O") {
+                gameBoardSquares[i].style.backgroundColor = "blue";
+            }
+        }
+    };
+
     onePlayerButton.addEventListener("click", () => {
         mainHeader.style.display = "";
         startPage.style.display = "none";
@@ -270,18 +293,65 @@ const displayController = (() => {
 
         const symbolIndex = Math.round(Math.random());
 
-        gameController.playerOne = Player(
-            onePlayerNameEntryForm.elements["one-player-name-input"].value,
-            gameController.gameSymbols[symbolIndex]
-        );
+        if (gameController.gameSymbols[symbolIndex] === "X") {
+            gameController.playerOne = Player(
+                onePlayerNameEntryForm.elements["one-player-name-input"].value,
+                gameController.gameSymbols[symbolIndex]
+            );
+            gameController.playerTwo = GameAI(
+                gameController.gameAIName,
+                gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+            );
+        } else {
+            gameController.playerTwo = Player(
+                onePlayerNameEntryForm.elements["one-player-name-input"].value,
+                gameController.gameSymbols[symbolIndex]
+            );
+            gameController.playerOne = GameAI(
+                gameController.gameAIName,
+                gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+            );
+        }
 
-        gameController.playerTwo = GameAI(
-            gameController.gameAIName,
-            gameController.gameSymbols[!symbolIndex]
-        );
+        gameController.activePlayer = gameController.playerOne;
+        playerOneNameDisplay.style.backgroundColor = "green";
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
+
+        if (gameController.activePlayer.name === gameController.gameAIName) {
+            gameController.activePlayer.makeAIMove();
+            gameController.activePlayer = gameController.playerTwo;
+            updateBoardDisplay();
+        }
+
+        for (let i = 0; i < gameBoardSquares.length; i += 1) {
+            gameBoardSquares[i].addEventListener("click", () => {
+                if (gameBoard.gameBoardArray[i] === " ") {
+                    gameController.activePlayer.makePlayerMove(i);
+                    if (
+                        gameController.activePlayer === gameController.playerOne
+                    ) {
+                        playerOneNameDisplay.style.backgroundColor = "white";
+                        playerTwoNameDisplay.style.backgroundColor = "green";
+                        gameController.activePlayer = gameController.playerTwo;
+                    } else {
+                        gameController.activePlayer = gameController.playerOne;
+                        playerTwoNameDisplay.style.backgroundColor = "white";
+                        playerOneNameDisplay.style.backgroundColor = "green";
+                    }
+                    updateBoardDisplay();
+                }
+
+                if (gameBoard.checkWin() === "X") {
+                    alert(`${gameController.playerOne.name} wins!`);
+                } else if (gameBoard.checkWin() === "O") {
+                    alert(`${gameController.playerTwo.name} wins!`);
+                } else if (gameBoard.checkWin() === "T") {
+                    alert("TIE!");
+                }
+            });
+        }
     });
 
     twoPlayerNameEntryForm.addEventListener("submit", (event) => {
@@ -293,28 +363,64 @@ const displayController = (() => {
 
         const symbolIndex = Math.round(Math.random());
 
-        gameController.playerOne = Player(
-            twoPlayerNameEntryForm.elements["two-player-name-input-1"].value,
-            gameController.gameSymbols[symbolIndex]
-        );
+        if (gameController.gameSymbols[symbolIndex] === "X") {
+            gameController.playerOne = Player(
+                twoPlayerNameEntryForm.elements["two-player-name-input-1"]
+                    .value,
+                gameController.gameSymbols[symbolIndex]
+            );
+            gameController.playerTwo = Player(
+                twoPlayerNameEntryForm.elements["two-player-name-input-2"]
+                    .value,
+                gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+            );
+        } else {
+            gameController.playerTwo = Player(
+                twoPlayerNameEntryForm.elements["two-player-name-input-1"]
+                    .value,
+                gameController.gameSymbols[symbolIndex]
+            );
+            gameController.playerOne = Player(
+                twoPlayerNameEntryForm.elements["two-player-name-input-2"]
+                    .value,
+                gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+            );
+        }
 
-        gameController.playerTwo = Player(
-            twoPlayerNameEntryForm.elements["two-player-name-input-2"].value,
-            gameController.gameSymbols[!symbolIndex]
-        );
+        gameController.activePlayer = gameController.playerOne;
+        playerOneNameDisplay.style.backgroundColor = "green";
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
+
+        for (let i = 0; i < gameBoardSquares.length; i += 1) {
+            gameBoardSquares[i].addEventListener("click", () => {
+                if (gameBoard.gameBoardArray[i] === " ") {
+                    gameController.activePlayer.makePlayerMove(i);
+                    if (
+                        gameController.activePlayer === gameController.playerOne
+                    ) {
+                        playerOneNameDisplay.style.backgroundColor = "white";
+                        playerTwoNameDisplay.style.backgroundColor = "green";
+                        gameController.activePlayer = gameController.playerTwo;
+                    } else {
+                        gameController.activePlayer = gameController.playerOne;
+                        playerTwoNameDisplay.style.backgroundColor = "white";
+                        playerOneNameDisplay.style.backgroundColor = "green";
+                    }
+                    updateBoardDisplay();
+                }
+
+                if (gameBoard.checkWin() === "X") {
+                    alert(`${gameController.playerOne.name} wins!`);
+                } else if (gameBoard.checkWin() === "O") {
+                    alert(`${gameController.playerTwo.name} wins!`);
+                } else if (gameBoard.checkWin() === "T") {
+                    alert("TIE!");
+                }
+            });
+        }
     });
-
-    const gameBoardSquares =
-        document.getElementsByClassName("game-board-square");
-
-    for (let i = 0; i < gameBoardSquares.length; i += 1) {
-        gameBoardSquares[i].addEventListener("click", () => {
-            gameBoardSquares[i].style.backgroundColor = "red";
-        });
-    }
 
     // gameBoardPage.style.opacity = "5%";
 })();
