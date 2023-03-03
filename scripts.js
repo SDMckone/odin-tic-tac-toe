@@ -286,7 +286,7 @@ const displayController = (() => {
             }
 
             gameBoardPage.style.opacity = "5%";
-        }, 3000);
+        }, 1000);
         return true;
     };
 
@@ -432,3 +432,5 @@ const displayController = (() => {
         }
     });
 })();
+
+displayController();
