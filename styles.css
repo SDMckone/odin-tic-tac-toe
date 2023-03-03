@@ -328,6 +328,8 @@ input#two-player-name-input-2 {
     height: 250px;
 
     border-radius: 10px;
+
+    padding: 10px;
 }
 
 footer {

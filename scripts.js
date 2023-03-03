@@ -219,6 +219,8 @@ const gameController = (() => {
 })();
 
 const displayController = (() => {
+    /** @type {string} Color to indicate active player */
+    const activePlayerColor = "#95e884";
     // Main header for site
     const mainHeader = document.getElementById("main-header");
     // Start page div
@@ -238,34 +240,54 @@ const displayController = (() => {
         document.getElementsByClassName("one-player-button")[0];
     const twoPlayerButton =
         document.getElementsByClassName("two-player-button")[0];
-
     const onePlayerNameEntryForm = document.getElementById(
         "one-player-name-entry-form"
     );
-
     const twoPlayerNameEntryForm = document.getElementById(
         "two-player-name-entry-form"
     );
-
     const playerOneNameDisplay = document.getElementById("player-one-name");
     const playerTwoNameDisplay = document.getElementById("player-two-name");
+
+    const gameBoardSquares =
+        document.getElementsByClassName("game-board-square");
 
     mainHeader.style.display = "none";
     onePlayerNameEntryPage.style.display = "none";
     twoPlayerNameEntryPage.style.display = "none";
     gameBoardPage.style.display = "none";
 
-    const gameBoardSquares =
-        document.getElementsByClassName("game-board-square");
-
     const updateBoardDisplay = () => {
         for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
             if (gameBoard.gameBoardArray[i] === "X") {
-                gameBoardSquares[i].style.backgroundColor = "red";
+                gameBoardSquares[i].src = "images/x.png";
+                gameBoardSquares[i].style["pointer-events"] = "none";
             } else if (gameBoard.gameBoardArray[i] === "O") {
-                gameBoardSquares[i].style.backgroundColor = "blue";
+                gameBoardSquares[i].src = "images/o.png";
+                gameBoardSquares[i].style["pointer-events"] = "none";
             }
         }
+    };
+
+    const displayWinPage = () => {
+        if (gameBoard.checkWin() === "N") {
+            return false;
+        }
+
+        gameBoardPage.style["pointer-events"] = "none";
+        gameBoardPage.style["user-select"] = "none";
+        setTimeout(() => {
+            if (gameBoard.checkWin() === "X") {
+                console.log(`${gameController.playerOne.name} wins!`);
+            } else if (gameBoard.checkWin() === "O") {
+                console.log(`${gameController.playerTwo.name} wins!`);
+            } else if (gameBoard.checkWin() === "T") {
+                console.log("TIE!");
+            }
+
+            gameBoardPage.style.opacity = "5%";
+        }, 3000);
+        return true;
     };
 
     onePlayerButton.addEventListener("click", () => {
@@ -288,7 +310,6 @@ const displayController = (() => {
         event.preventDefault();
 
         onePlayerNameEntryPage.style.display = "none";
-        twoPlayerNameEntryPage.style.display = "none";
         gameBoardPage.style.display = "";
 
         const symbolIndex = Math.round(Math.random());
@@ -298,7 +319,7 @@ const displayController = (() => {
                 onePlayerNameEntryForm.elements["one-player-name-input"].value,
                 gameController.gameSymbols[symbolIndex]
             );
-            playerOneNameDisplay.style.backgroundColor = "green";
+            playerOneNameDisplay.style.backgroundColor = activePlayerColor;
             gameController.playerTwo = GameAI(
                 gameController.gameAIName,
                 gameController.gameSymbols[Math.abs(symbolIndex - 1)]
@@ -308,7 +329,7 @@ const displayController = (() => {
                 onePlayerNameEntryForm.elements["one-player-name-input"].value,
                 gameController.gameSymbols[symbolIndex]
             );
-            playerTwoNameDisplay.style.backgroundColor = "green";
+            playerTwoNameDisplay.style.backgroundColor = activePlayerColor;
             gameController.playerOne = GameAI(
                 gameController.gameAIName,
                 gameController.gameSymbols[Math.abs(symbolIndex - 1)]
@@ -333,21 +354,20 @@ const displayController = (() => {
                         gameController.activePlayer === gameController.playerOne
                     ) {
                         gameController.playerOne.makePlayerMove(i);
-                        gameController.playerTwo.makeAIMove();
+                        updateBoardDisplay();
+                        if (!displayWinPage()) {
+                            gameController.playerTwo.makeAIMove();
+                        }
                     } else {
                         gameController.playerTwo.makePlayerMove(i);
-                        gameController.playerOne.makeAIMove();
+                        updateBoardDisplay();
+                        if (!displayWinPage()) {
+                            gameController.playerOne.makeAIMove();
+                        }
                     }
                 }
                 updateBoardDisplay();
-
-                if (gameBoard.checkWin() === "X") {
-                    alert(`${gameController.playerOne.name} wins!`);
-                } else if (gameBoard.checkWin() === "O") {
-                    alert(`${gameController.playerTwo.name} wins!`);
-                } else if (gameBoard.checkWin() === "T") {
-                    alert("TIE!");
-                }
+                displayWinPage();
             });
         }
     });
@@ -355,7 +375,6 @@ const displayController = (() => {
     twoPlayerNameEntryForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
-        onePlayerNameEntryPage.style.display = "none";
         twoPlayerNameEntryPage.style.display = "none";
         gameBoardPage.style.display = "";
 
@@ -386,7 +405,7 @@ const displayController = (() => {
         }
 
         gameController.activePlayer = gameController.playerOne;
-        playerOneNameDisplay.style.backgroundColor = "green";
+        playerOneNameDisplay.style.backgroundColor = "#95e884";
 
         playerOneNameDisplay.textContent = gameController.playerOne.name;
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
@@ -399,26 +418,17 @@ const displayController = (() => {
                         gameController.activePlayer === gameController.playerOne
                     ) {
                         playerOneNameDisplay.style.backgroundColor = "white";
-                        playerTwoNameDisplay.style.backgroundColor = "green";
+                        playerTwoNameDisplay.style.backgroundColor = "#95e884";
                         gameController.activePlayer = gameController.playerTwo;
                     } else {
                         gameController.activePlayer = gameController.playerOne;
                         playerTwoNameDisplay.style.backgroundColor = "white";
-                        playerOneNameDisplay.style.backgroundColor = "green";
+                        playerOneNameDisplay.style.backgroundColor = "#95e884";
                     }
                     updateBoardDisplay();
-                }
-
-                if (gameBoard.checkWin() === "X") {
-                    alert(`${gameController.playerOne.name} wins!`);
-                } else if (gameBoard.checkWin() === "O") {
-                    alert(`${gameController.playerTwo.name} wins!`);
-                } else if (gameBoard.checkWin() === "T") {
-                    alert("TIE!");
+                    displayWinPage();
                 }
             });
         }
     });
-
-    // gameBoardPage.style.opacity = "5%";
 })();
