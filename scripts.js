@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-alert */
 /* eslint-disable no-console */
 
@@ -236,10 +237,14 @@ const displayController = (() => {
     // Game board page div
     const gameBoardPage = document.getElementById("game-board-page");
 
-    const onePlayerButton =
-        document.getElementsByClassName("one-player-button")[0];
-    const twoPlayerButton =
-        document.getElementsByClassName("two-player-button")[0];
+    // Game over page div
+    const gameOverPage = document.getElementById("game-over-page");
+
+    // Game over message div
+    const gameOverMessage = document.getElementById("game-over-message");
+
+    const onePlayerButton = document.getElementById("one-player-button");
+    const twoPlayerButton = document.getElementById("two-player-button");
     const onePlayerNameEntryForm = document.getElementById(
         "one-player-name-entry-form"
     );
@@ -252,10 +257,14 @@ const displayController = (() => {
     const gameBoardSquares =
         document.getElementsByClassName("game-board-square");
 
+    const playAgainButton = document.getElementById("play-again-button");
+    const homeButton = document.getElementById("home-button");
+
     mainHeader.style.display = "none";
     onePlayerNameEntryPage.style.display = "none";
     twoPlayerNameEntryPage.style.display = "none";
     gameBoardPage.style.display = "none";
+    gameOverPage.style.display = "none";
 
     const updateBoardDisplay = () => {
         for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
@@ -278,14 +287,15 @@ const displayController = (() => {
         gameBoardPage.style["user-select"] = "none";
         setTimeout(() => {
             if (gameBoard.checkWin() === "X") {
-                console.log(`${gameController.playerOne.name} wins!`);
+                gameOverMessage.textContent = `${gameController.playerOne.name} wins!`;
             } else if (gameBoard.checkWin() === "O") {
-                console.log(`${gameController.playerTwo.name} wins!`);
+                gameOverMessage.textContent = `${gameController.playerTwo.name} wins!`;
             } else if (gameBoard.checkWin() === "T") {
-                console.log("TIE!");
+                gameOverMessage.textContent = `Tie!`;
             }
 
-            gameBoardPage.style.opacity = "5%";
+            gameBoardPage.style.opacity = "1%";
+            gameOverPage.style.display = "";
         }, 1000);
         return true;
     };
@@ -385,11 +395,12 @@ const displayController = (() => {
                             setTimeout(() => {
                                 gameController.playerOne.makeAIMove();
                                 updateBoardDisplay();
-                                displayWinPage();
-                                playerOneNameDisplay.style.backgroundColor =
-                                    "white";
-                                playerTwoNameDisplay.style.backgroundColor =
-                                    activePlayerColor;
+                                if (!displayWinPage()) {
+                                    playerOneNameDisplay.style.backgroundColor =
+                                        "white";
+                                    playerTwoNameDisplay.style.backgroundColor =
+                                        activePlayerColor;
+                                }
                             }, 1000);
                         }
                     }
@@ -462,6 +473,105 @@ const displayController = (() => {
                 }
             });
         }
+    });
+
+    playAgainButton.addEventListener("click", () => {
+        gameBoardPage.style.display = "";
+        gameBoardPage.style.opacity = "100%";
+        gameOverPage.style.display = "none";
+
+        for (let i = 0; i < gameBoard.gameBoardArray.length; i += 1) {
+            gameBoardSquares[i].src = "images/blank.png";
+            gameBoardSquares[i].style["pointer-events"] = "auto";
+        }
+
+        gameBoard.resetBoard();
+        updateBoardDisplay();
+
+        playerOneNameDisplay.style.backgroundColor = "white";
+        playerTwoNameDisplay.style.backgroundColor = "white";
+
+        if (gameController.isSinglePlayer) {
+            const symbolIndex = Math.round(Math.random());
+
+            if (gameController.gameSymbols[symbolIndex] === "X") {
+                gameController.playerOne = Player(
+                    onePlayerNameEntryForm.elements["one-player-name-input"]
+                        .value,
+                    gameController.gameSymbols[symbolIndex]
+                );
+                playerOneNameDisplay.style.backgroundColor = activePlayerColor;
+                gameController.playerTwo = GameAI(
+                    gameController.gameAIName,
+                    gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+                );
+            } else {
+                gameController.playerTwo = Player(
+                    onePlayerNameEntryForm.elements["one-player-name-input"]
+                        .value,
+                    gameController.gameSymbols[symbolIndex]
+                );
+                gameController.playerOne = GameAI(
+                    gameController.gameAIName,
+                    gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+                );
+            }
+
+            gameController.activePlayer = gameController.playerOne;
+
+            playerOneNameDisplay.textContent = gameController.playerOne.name;
+            playerTwoNameDisplay.textContent = gameController.playerTwo.name;
+
+            if (
+                gameController.activePlayer.name === gameController.gameAIName
+            ) {
+                playerOneNameDisplay.style.backgroundColor = activePlayerColor;
+                setTimeout(() => {
+                    gameController.activePlayer.makeAIMove();
+                    gameController.activePlayer = gameController.playerTwo;
+                    updateBoardDisplay();
+                    playerOneNameDisplay.style.backgroundColor = "white";
+                    playerTwoNameDisplay.style.backgroundColor =
+                        activePlayerColor;
+                }, 1000);
+            }
+        } else {
+            const symbolIndex = Math.round(Math.random());
+
+            if (gameController.gameSymbols[symbolIndex] === "X") {
+                gameController.playerOne = Player(
+                    twoPlayerNameEntryForm.elements["two-player-name-input-1"]
+                        .value,
+                    gameController.gameSymbols[symbolIndex]
+                );
+                gameController.playerTwo = Player(
+                    twoPlayerNameEntryForm.elements["two-player-name-input-2"]
+                        .value,
+                    gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+                );
+            } else {
+                gameController.playerTwo = Player(
+                    twoPlayerNameEntryForm.elements["two-player-name-input-1"]
+                        .value,
+                    gameController.gameSymbols[symbolIndex]
+                );
+                gameController.playerOne = Player(
+                    twoPlayerNameEntryForm.elements["two-player-name-input-2"]
+                        .value,
+                    gameController.gameSymbols[Math.abs(symbolIndex - 1)]
+                );
+            }
+
+            gameController.activePlayer = gameController.playerOne;
+            playerOneNameDisplay.style.backgroundColor = "#95e884";
+
+            playerOneNameDisplay.textContent = gameController.playerOne.name;
+            playerTwoNameDisplay.textContent = gameController.playerTwo.name;
+        }
+    });
+
+    homeButton.addEventListener("click", () => {
+        location.reload();
     });
 })();
 
