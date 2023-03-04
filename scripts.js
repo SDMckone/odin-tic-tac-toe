@@ -329,7 +329,6 @@ const displayController = (() => {
                 onePlayerNameEntryForm.elements["one-player-name-input"].value,
                 gameController.gameSymbols[symbolIndex]
             );
-            playerTwoNameDisplay.style.backgroundColor = activePlayerColor;
             gameController.playerOne = GameAI(
                 gameController.gameAIName,
                 gameController.gameSymbols[Math.abs(symbolIndex - 1)]
@@ -342,9 +341,14 @@ const displayController = (() => {
         playerTwoNameDisplay.textContent = gameController.playerTwo.name;
 
         if (gameController.activePlayer.name === gameController.gameAIName) {
-            gameController.activePlayer.makeAIMove();
-            gameController.activePlayer = gameController.playerTwo;
-            updateBoardDisplay();
+            playerOneNameDisplay.style.backgroundColor = activePlayerColor;
+            setTimeout(() => {
+                gameController.activePlayer.makeAIMove();
+                gameController.activePlayer = gameController.playerTwo;
+                updateBoardDisplay();
+                playerOneNameDisplay.style.backgroundColor = "white";
+                playerTwoNameDisplay.style.backgroundColor = activePlayerColor;
+            }, 1000);
         }
 
         for (let i = 0; i < gameBoardSquares.length; i += 1) {
@@ -356,13 +360,37 @@ const displayController = (() => {
                         gameController.playerOne.makePlayerMove(i);
                         updateBoardDisplay();
                         if (!displayWinPage()) {
-                            gameController.playerTwo.makeAIMove();
+                            playerTwoNameDisplay.style.backgroundColor =
+                                activePlayerColor;
+                            playerOneNameDisplay.style.backgroundColor =
+                                "white";
+                            setTimeout(() => {
+                                gameController.playerTwo.makeAIMove();
+                                updateBoardDisplay();
+                                displayWinPage();
+                                playerTwoNameDisplay.style.backgroundColor =
+                                    "white";
+                                playerOneNameDisplay.style.backgroundColor =
+                                    activePlayerColor;
+                            }, 1000);
                         }
                     } else {
                         gameController.playerTwo.makePlayerMove(i);
                         updateBoardDisplay();
                         if (!displayWinPage()) {
-                            gameController.playerOne.makeAIMove();
+                            playerOneNameDisplay.style.backgroundColor =
+                                activePlayerColor;
+                            playerTwoNameDisplay.style.backgroundColor =
+                                "white";
+                            setTimeout(() => {
+                                gameController.playerOne.makeAIMove();
+                                updateBoardDisplay();
+                                displayWinPage();
+                                playerOneNameDisplay.style.backgroundColor =
+                                    "white";
+                                playerTwoNameDisplay.style.backgroundColor =
+                                    activePlayerColor;
+                            }, 1000);
                         }
                     }
                 }
@@ -417,16 +445,20 @@ const displayController = (() => {
                     if (
                         gameController.activePlayer === gameController.playerOne
                     ) {
-                        playerOneNameDisplay.style.backgroundColor = "white";
-                        playerTwoNameDisplay.style.backgroundColor = "#95e884";
-                        gameController.activePlayer = gameController.playerTwo;
-                    } else {
+                        if (!displayWinPage()) {
+                            playerOneNameDisplay.style.backgroundColor =
+                                "white";
+                            playerTwoNameDisplay.style.backgroundColor =
+                                "#95e884";
+                            gameController.activePlayer =
+                                gameController.playerTwo;
+                        }
+                    } else if (!displayWinPage()) {
                         gameController.activePlayer = gameController.playerOne;
                         playerTwoNameDisplay.style.backgroundColor = "white";
                         playerOneNameDisplay.style.backgroundColor = "#95e884";
                     }
                     updateBoardDisplay();
-                    displayWinPage();
                 }
             });
         }
